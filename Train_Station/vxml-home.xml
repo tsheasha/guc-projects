@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<vxml version="2.0">
+
+	
+	<script>
+		function price(Number,Class,From,Dest,Route)
+		{   
+			var res=0;
+			if(Route=='Round Trip')
+			res-=25;
+			if(From=='Cairo')
+			res+=10;
+			if(From=='Alex')
+			res+=20;
+			if(From=='Luxor')
+			res+=30;
+			if(From=='Aswan')
+			res+=40;	
+			if(Dest=='Cairo')
+			res+=10;
+			if(Dest=='Alex')
+			res+=20;
+			if(Dest=='Luxor')
+			res+=30;
+			if(Dest=='Aswan')
+			res+=40;					
+			if(Number=='one')
+			res*=1;
+			if(Number=='two')
+			res*=2;
+			if(Number=='three')
+			res*=3;
+			if(Number=='four')
+			res*=4;
+			if(Number=='five')
+			res*=5;
+			if(Number=='six')
+			res*=6;
+			if(Number=='seven')
+			res*=7;
+			if(Number=='eight')
+			res*=8;
+			if(Number=='nine')
+			res*=9;
+			if(Class=='third')
+			res+=50;
+			if(Class=='second')
+			res+=150;
+			if(Class=='first')
+			res+=200;
+			return res;
+		}
+	</script>
+	
+    <nomatch>
+        No Match! I'm sorry, I didn't understand you.  Could you please try that again? 
+        <reprompt />
+    </nomatch>
+    <noinput>
+        No Input! I'm sorry, I didn't hear anything.  Could you please try that again? 
+        <reprompt />
+    </noinput>
+
+  	<menu id="menu">
+  		<property name="inputmodes" value="dtmf"/>
+    	<prompt bargein="false">
+    	  Welcome to our train station reservation system
+    	</prompt>
+    	<prompt>
+      		<enumerate>
+	    		<value expr="_prompt"/> press <value expr="_dtmf"/>
+      		</enumerate>
+    	</prompt>
+   
+    	<choice next="#dtmfForm_N_From" dtmf="1">
+    	  for non voice reservation
+    	</choice>
+    	<choice next="#dtmfForm_V_From"  dtmf="2">
+    	  for voice reservation
+    	</choice>
+  	</menu> 
+	
+	<form id="dtmfForm_N_From">
+		<property name="inputmodes" value="dtmf"/>
+		
+		
+		<field name="routeField" slot="routeField">		
+			<grammar type="text/gsl">
+			<![CDATA[[
+			[one dtmf-1]    { <routeField  "One Way">  }
+			[two dtmf-2]    { <routeField  "Round Trip">  }
+			]]]>
+			</grammar>
+			<prompt bargein="false">
+			  If you want to book a 
+			  <prompt>      		
+					One Way Ticket press one, 
+					for a Round Trip Ticket press two.
+				</prompt>
+			</prompt>    	
+		</field>		
+		<filled namelist="routeField" mode="all">		
+			<prompt>
+				Looks like you said <value expr="routeField" />.
+			</prompt>
+            <assign name="routeFieldVar" expr="routeField" />
+		 </filled>		 
+		 <field name="confirmRouteField" slot="confirmRouteField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <confirmRouteField  "yes"> }
+				[no dtmf-2]    { <confirmRouteField  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="confirmRouteField" mode="all">		
+			<if cond="confirmRouteField == 'no'">
+				<clear namelist="confirmRouteField"/>
+				<goto next="#dtmfForm_N_From" />
+			</if>			
+	   </filled>
+	   
+		<field name="fromField" slot="fromField">		
+			<grammar type="text/gsl">
+			<![CDATA[[
+			[one dtmf-1]    { <fromField  "Aswan">  }
+			[two dtmf-2]    { <fromField  "Cairo">  }
+			[three dtmf-3]    { <fromField  "Alex">  }		
+			[four dtmf-4]    { <fromField  "Luxor">  }
+			]]]>
+			</grammar>
+			<prompt bargein="false">
+			  Please choose your departure place,
+			  <prompt>      		
+					for Aswan press one, 
+					for Cairo press two ,
+					for Alex press three, 
+					for Luxor press four.   		
+				</prompt>
+			</prompt>    	
+		</field>		
+		<filled namelist="fromField" mode="all">		
+			<prompt>
+				Looks like you said <value expr="fromField" />.
+			</prompt>
+            <assign name="fromFieldVar" expr="fromField" />
+		 </filled>		 
+		 <field name="confirmFromField" slot="confirmFromField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <confirmFromField  "yes"> }
+				[no dtmf-2]    { <confirmFromField  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="confirmFromField" mode="all">		
+			<if cond="confirmFromField == 'no'">
+				<clear namelist="confirmFromField"/>
+				<goto next="#dtmfForm_N_From" />
+			</if>			
+	   </filled>
+	   
+	   <field name="destinationField" slot="destinationField">			
+			<grammar type="text/gsl">
+				<![CDATA[[				
+				[one dtmf-1]    { <destinationField  "Cairo">  }
+				[two dtmf-2]    { <destinationField  "Alex">  }		
+				[three dtmf-3]    { <destinationField  "Luxor">  }
+				[four dtmf-4]    { <destinationField  "Aswan">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			  Please choose your destination place,
+			  <prompt>					
+					for Cairo press one ,
+					for Alex press two, 
+					for Luxor press three.   		
+					for Aswan press four.  
+				</prompt>
+			</prompt>	
+		</field>			
+		<filled namelist="destinationField" mode="all">
+			<if cond="fromField == destinationField">					
+				<prompt bargein="false">
+				  Sorry, departure place and destination are the same try again.
+				</prompt>				
+				<clear namelist="destinationField"/>
+			<else/>
+				<prompt>
+					Looks like you said <value expr="destinationField" />.
+				</prompt>
+            <assign name="destinationFieldVar" expr="destinationField" />
+			</if>			
+		</filled>	
+		<field name="confirmDestinationField" slot="confirmDestinationField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <confirmDestinationField  "yes"> }
+				[no dtmf-2]    { <confirmDestinationField  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="confirmDestinationField" mode="all">
+			<if cond="confirmDestinationField == 'no'">				
+				<clear namelist="confirmDestinationField destinationField"/>
+			<elseif cond="confirmDestinationField == 'yes'" />
+				<goto next="#dtmfForm_N_DayTime" />
+			</if>
+		</filled>
+	</form>
+	
+	<!--////////////////////////////////////////////////////////////////////////-->
+	
+	<form id="dtmfForm_N_DayTime">
+		<property name="inputmodes" value="dtmf"/>
+		<field name="dayField" slot="dayField">
+        <grammar src="builtin:dtmf/date"/>
+			<prompt>
+				Please enter the date of your trip in the form of Year then Month then Day.
+			</prompt>
+		</field>
+		<filled namelist="dayField" mode="all">
+			<prompt>
+				Looks like you said <say-as interpret-as="vxml:date"> <value expr="dayField" /> </say-as>.
+			</prompt>
+		</filled>		
+		<field name="dayConfirmField" slot="dayConfirmField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <dayConfirmField  "yes"> }
+				[no dtmf-2]    { <dayConfirmField  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="dayConfirmField" mode="all">
+			<if cond="dayConfirmField == 'no'">
+				<goto next="#dtmfForm_N_DayTime" />
+			</if>
+	   </filled>
+	   
+	   <field name="timeField" slot="timeField">
+			<grammar type="text/gsl">
+				<![CDATA[[				
+				[one (dtmf-1)] { <timeField  "one">  }
+				[two (dtmf-2)] { <timeField  "two">  }
+				[three (dtmf-3)] { <timeField  "three">  }
+				[four (dtmf-4)] { <timeField  "four">  }
+				[five (dtmf-5)] { <timeField  "five">  }
+				[six (dtmf-6)] { <timeField  "six">  }
+				[seven (dtmf-7)] { <timeField  "seven">  }
+				[eight (dtmf-8)] { <timeField  "eight">  }
+				[nine (dtmf-9)] { <timeField  "nine">  }
+				[ten (dtmf-1 dtmf-0)] { <timeField  "ten">  }
+				[eleven (dtmf-1 dtmf-1)] { <timeField  "eleven">  }
+				[twelve (dtmf-1 dtmf-2)] { <timeField  "twelve">  }
+				[thirteen (dtmf-1 dtmf-3)] { <timeField  "thirteen">  }
+				[fourteen (dtmf-1 dtmf-4)] { <timeField  "fourteen">  }
+				[fifteen (dtmf-1 dtmf-5)] { <timeField  "fifteen">  }
+				[sixteen (dtmf-1 dtmf-6)] { <timeField  "sixteen">  }
+				[seventeen (dtmf-1 dtmf-7)] { <timeField  "seventeen">  }
+				[eighteen (dtmf-1 dtmf-8)] { <timeField  "eighteen">  }
+				[ninteen (dtmf-1 dtmf-9)] { <timeField  "ninteen">  }
+				[twenty (dtmf-2 dtmf-0)] { <timeField  "twenty">  }
+				[twentyone (dtmf-2 dtmf-1)] { <timeField  "twentyone">  }
+				[twentytwo (dtmf-2 dtmf-2)] { <timeField  "twentytwo">  }
+				[twentythree (dtmf-2 dtmf-3)] { <timeField  "twentythree">  }
+				[twentyfour (dtmf-2 dtmf-4)] { <timeField  "twentyfour">  }
+				]]]>
+			</grammar>
+			<prompt>
+				Please choose the time from one to twenty four hours.
+			</prompt>
+		</field>
+
+		<filled namelist="timeField" mode="all">
+			<prompt>
+				Looks like you said <value expr="timeField" />.
+			</prompt>
+		</filled>		
+		<field name="timeConfirmField" slot="timeConfirmField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <timeConfirmField  "yes"> }
+				[no dtmf-2]    { <timeConfirmField  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="timeConfirmField" mode="all">
+			<if cond="timeConfirmField == 'no'">
+				<goto next="#dtmfForm_N_DayTime" />
+			<elseif cond="timeConfirmField == 'yes'" />
+				<goto next="#dtmfForm_N_Class" />
+			</if>
+	   </filled>
+		
+	</form> 
+	
+	<!--////////////////////////////////////////////////////////////////////////-->
+	
+	<form id="dtmfForm_N_Class">
+		<property name="inputmodes" value="dtmf"/>
+		<field name="classField" slot="classField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[one dtmf-1]    { <classField  "one">  }
+				[two dtmf-2]    { <classField  "two">  }
+				[three dtmf-3]  { <classField  "three"> }				
+				]]]>
+			</grammar>
+
+			<prompt>
+				Please choose your class, for First class press one for second class press two for third class press three
+			</prompt>
+		</field>
+
+		<filled namelist="classField" mode="all">
+			<prompt>
+				Looks like you said <value expr="classField" />.
+			</prompt>
+			<assign name="classFieldVar" expr="classField" />
+			<goto next="#dtmfForm_N_ClassConfirm" />
+		</filled>
+	</form> 
+	<form id="dtmfForm_N_ClassConfirm">
+		<property name="inputmodes" value="dtmf"/>
+		<field name="confirm" slot="confirm">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <confirm  "yes"> }
+				[no dtmf-2]    { <confirm  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="confirm" mode="all">
+			<if cond="confirm == 'no'">
+				<goto next="#dtmfForm_N_Class" />
+			<elseif cond="confirm == 'yes'" />			
+				<goto next="#dtmfForm_N_Meal" />
+			</if>
+	   </filled>
+	</form>
+	
+	<!--////////////////////////////////////////////////////////////////////////-->
+	
+	<form id="dtmfForm_N_Meal">
+		<property name="inputmodes" value="dtmf"/>		
+		<field name="guess" slot="guess">		
+			<grammar type="text/gsl">
+			<![CDATA[[
+			[one dtmf-1]    { <guess  "want a meal">  }
+			[two dtmf-2]    { <guess  "dont want a meal">  }			
+			]]]>
+			</grammar>
+			
+			<prompt bargein="false">
+			  If you want a meal press one,  if you dont press two.
+			</prompt>    	
+		</field>		
+		<filled namelist="guess" mode="all">		
+			<prompt>
+				Looks like you <value expr="guess" />.
+			</prompt>
+			<goto next="#dtmfForm_N_MealConfirm" />.
+		 </filled>      
+    </form>	
+	<form id="dtmfForm_N_MealConfirm">
+		<property name="inputmodes" value="dtmf"/>
+		<field name="confirm" slot="confirm">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <confirm  "yes"> }
+				[no dtmf-2]    { <confirm  "no">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes and two for no
+			</prompt>
+		</field>
+		<filled namelist="confirm" mode="all">
+			<if cond="confirm == 'no'">
+				<goto next="#dtmfForm_N_Meal" />
+			<elseif cond="confirm == 'yes'" />
+				<goto next="#dtmfForm_N_Tickets" />
+			</if>
+	   </filled>
+	</form>
+	
+	<!--////////////////////////////////////////////////////////////////////////-->
+	
+	<form id="dtmfForm_N_Tickets">
+		<property name="inputmodes" value="dtmf"/>		
+		<field name="ticketsField" slot="ticketsField">		
+			<grammar type="text/gsl">
+			<![CDATA[[
+			[one dtmf-1]    { <ticketsField  "one">  }
+			[two dtmf-2]    { <ticketsField  "two">  }			
+			[three dtmf-3]    { <ticketsField  "three">  }
+			[four dtmf-4]    { <ticketsField  "four">  }			
+			[five dtmf-5]    { <ticketsField  "five">  }
+			[six dtmf-6]    { <ticketsField  "six">  }			
+			[seven dtmf-7]    { <ticketsField  "seven">  }
+			[eight dtmf-8]    { <ticketsField  "eight">  }			
+			[nine dtmf-9]    { <ticketsField  "nine">  }
+			]]]>
+			</grammar>
+			
+			<prompt bargein="false">
+				Please enter the number of tickets, one to nine tickets are allowed.
+			</prompt>    	
+		</field>		
+		<filled namelist="ticketsField" mode="all">		
+			<if cond="ticketsField == 1">
+				<prompt>
+					Looks like you want <value expr="ticketsField" /> ticket.
+				</prompt>
+			<else/>
+				<prompt>
+					Looks like you want <value expr="ticketsField" /> tickets.
+				</prompt>
+			</if>
+			<assign name="ticketsFieldVar" expr="ticketsField" />
+			<goto next="#dtmfForm_N_ticketConfirm" />.
+		 </filled>      
+    </form>	
+	<form id="dtmfForm_N_ticketConfirm">
+		<property name="inputmodes" value="dtmf"/>
+		<field name="ticketsConfirmField" slot="ticketsConfirmField">
+			<grammar type="text/gsl">
+				<![CDATA[[
+				[yes dtmf-1]  { <ticketsConfirmField  "yes"> }
+				[no dtmf-2]    { <ticketsConfirmField  "no">  }
+				[cancel dtmf-3]    { <ticketsConfirmField  "cancel">  }
+				]]]>
+			</grammar>
+			<prompt bargein="false">
+			   is this your right choice, press one if yes, two for no, or three cancel to cancel entire reservation
+			</prompt>
+		</field>
+		<filled namelist="ticketsConfirmField" mode="all">
+			<if cond="ticketsConfirmField == 'no'">
+				<goto next="#dtmfForm_N_Tickets" />
+			<elseif cond="ticketsConfirmField == 'yes'" />
+				
+				<prompt>			
+					Your owe me <value expr="price(ticketsFieldVar, classFieldVar, fromFieldVar, destinationFieldVar, routeFieldVar)"/> egyptian pounds only, you can pay by	credit card or in cash. Thank you for using our system.
+				</prompt>			
+			<elseif cond="ticketsConfirmField == 'cancel'" />
+				
+				<prompt>			
+					Your reservation has been cancelled upon your request. Thank you for using our system.
+				</prompt>	
+			</if>
+			
+	   </filled>
+	</form>
+	
+	<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+	<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+	<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+	
+	<form id="dtmfForm_V_From">
+		<property name="inputmodes" value="voice"/>
+
+		<field name="routeField" slot="routeField">		
+			<grammar mode="voice" root="from">
+              <rule id="from" scope="public"> 
+               <one-of>
+                 <item>One Way</item>
+                 <item>Round Trip</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			  Please say if you want to book a One Way or Round Trip Ticket.
+			</prompt>			
+		</field>		
+		<filled namelist="routeField" mode="all">		
+			<prompt>
+				Looks like you said <value expr="routeField" />.
+			</prompt>
+            <assign name="routeFieldVar" expr="routeField" />
+		 </filled>		 
+
+		 <field name="confirmRouteField" slot="confirmRouteField">
+			<grammar mode="voice" root="confti">
+              <rule id="confti" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="confirmRouteField" mode="all">		
+			<if cond="confirmRouteField == 'no'">
+				<clear namelist="confirmRouteField"/>
+				<goto next="#dtmfForm_V_From" />
+			</if>			
+	   </filled>
+
+		
+		<field name="fromField" slot="fromField">		
+			<grammar mode="voice" root="from">
+              <rule id="from" scope="public"> 
+               <one-of>
+                 <item>Cairo</item>
+                 <item>Alex</item>
+				 <item>Luxor</item>
+				 <item>Aswan</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			  Please say your departure place, from the following places
+			  <prompt>					
+					Cairo,
+					Alex, 
+					Luxor,   		
+					Aswan.  
+				</prompt>
+			</prompt>			
+		</field>		
+		<filled namelist="fromField" mode="all">		
+			<prompt>
+				Looks like you said <value expr="fromField" />.
+			</prompt>
+            <assign name="fromFieldVar" expr="fromField" />
+		 </filled>		 
+		 <field name="confirmFromField" slot="confirmFromField">
+			<grammar mode="voice" root="confti">
+              <rule id="confti" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="confirmFromField" mode="all">		
+			<if cond="confirmFromField == 'no'">
+				<clear namelist="confirmFromField"/>
+				<goto next="#dtmfForm_V_From" />
+			</if>			
+	   </filled>
+	   
+	   <field name="destinationField" slot="destinationField">			
+			
+			<grammar mode="voice" root="from">
+              <rule id="from" scope="public"> 
+               <one-of>
+                 <item>Cairo</item>
+                 <item>Alex</item>
+				 <item>Luxor</item>
+				 <item>Aswan</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			  Please say your destination place, from the following places
+			  <prompt>					
+					Cairo,
+					Alex, 
+					Luxor,   		
+					Aswan.  
+				</prompt>
+			</prompt>	
+		</field>			
+		<filled namelist="destinationField" mode="all">
+			<if cond="fromField == destinationField">					
+				<prompt bargein="false">
+				  Sorry, departure place and destination are the same try again.
+				</prompt>				
+				<clear namelist="destinationField"/>
+			<else/>
+				<prompt>
+					Looks like you said <value expr="destinationField" />.
+				</prompt>
+            <assign name="destinationFieldVar" expr="destinationField" />
+			</if>			
+		</filled>
+	
+		<field name="confirmDestinationField" slot="confirmDestinationField">
+			<grammar mode="voice" root="conft">
+              <rule id="conft" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="confirmDestinationField" mode="all">
+			<if cond="confirmDestinationField == 'no'">				
+				<clear namelist="confirmDestinationField destinationField"/>
+			<elseif cond="confirmDestinationField == 'yes'" />
+				<goto next="#dtmfForm_V_DayTime" />
+			</if>
+		</filled>
+	</form>
+	
+		
+	<form id="dtmfForm_V_DayTime">
+		<property name="inputmodes" value="voice"/>
+		<field name="dayField"  slot="dayField">
+        <grammar src="builtin:grammar/date"/>
+			<prompt>
+				Please say the date of your trip day and month.
+			</prompt>
+		</field>
+		<filled namelist="dayField" mode="all">
+			<prompt>
+				Looks like you said <say-as interpret-as="vxml:date">  <value expr="dayField" /> </say-as>.
+			</prompt>
+		</filled>		
+		<field name="dayConfirmField" slot="dayConfirmField">
+			<grammar mode="voice" root="confclass">
+              <rule id="confclass" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="dayConfirmField" mode="all">
+			<if cond="dayConfirmField == 'no'">
+				<goto next="#dtmfForm_V_DayTime" />
+			</if>
+	   </filled>
+	   
+	   <field name="timeField" slot="timeField">
+			<grammar mode="voice" root="confclass">
+              <rule id="confclass" scope="public"> 
+               <one-of>
+                 <item>one</item>
+                 <item>two</item>
+				 <item>three</item>
+				 <item>four</item>
+				 <item>five</item>
+				 <item>six</item>
+				 <item>seven</item>
+				 <item>eight</item>
+				 <item>nine</item>
+				 <item>ten</item>
+				 <item>eleven</item>
+				 <item>twelve</item>
+				 <item>thirteen</item>
+				 <item>fourteen</item>
+				 <item>fifteen</item>
+				 <item>sixteen</item>
+				 <item>seventeen</item>
+				 <item>eightteen</item>
+				 <item>ninteen</item>
+				 <item>twenty one</item>
+				 <item>twenty two</item>
+				 <item>twenty three</item>
+				 <item>twenty four</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt>
+				Please say the time from one to twenty four hours.
+			</prompt>
+		</field>
+
+		<filled namelist="timeField" mode="all">
+			<prompt>
+				Looks like you said <value expr="timeField" />.
+			</prompt>
+		</filled>		
+		<field name="timeConfirmField" slot="timeConfirmField">
+			<grammar mode="voice" root="confclass">
+              <rule id="confclass" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="timeConfirmField" mode="all">
+			<if cond="timeConfirmField == 'no'">
+				<goto next="#dtmfForm_V_DayTime" />
+			<elseif cond="timeConfirmField == 'yes'" />
+				<goto next="#dtmfForm_V_Class" />
+			</if>
+	   </filled>
+		
+	</form> 
+	
+	
+	<form id="dtmfForm_V_Class">
+		<property name="inputmodes" value="voice"/>
+		<field name="guess" slot="guess">
+			<grammar mode="voice" root="class">
+              <rule id="class" scope="public"> 
+               <one-of>
+                 <item>one</item>
+                 <item>two</item>
+                 <item>three</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+				Please say the number of your ticket class. 
+			</prompt>
+		</field>
+		<filled namelist="guess" mode="all">
+			<prompt bargein="false">
+				Looks like you said <value expr="guess" />.
+			</prompt>
+			<assign name="classFieldVar" expr="guess" />
+			<goto next="#dtmfForm_V_ClassConfirm" />			
+		</filled>
+	</form>
+ 
+	<form id="dtmfForm_V_ClassConfirm">
+		<property name="inputmodes" value="voice"/>
+		<field name="confirm" slot="confirm">
+			<grammar mode="voice" root="confclass">
+              <rule id="confclass" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="confirm" mode="all">
+			<if cond="confirm == 'no'">
+				<goto next="#dtmfForm_V_Class" />
+			<elseif cond="confirm == 'yes'" />
+				<goto next="#dtmfForm_V_Meal" />
+			</if>
+	   </filled>
+	</form>
+	
+	<form id="dtmfForm_V_Meal">
+		<property name="inputmodes" value="voice"/>		
+		<field name="guess" slot="guess">		
+			<grammar mode="voice" root="meal">
+              <rule id="meal" scope="public"> 
+               <one-of>
+                 <item>meal</item>
+                 <item>no meal</item>
+               </one-of>
+              </rule>
+          </grammar>
+			
+			<prompt bargein="false">
+			  please say if you want a meal or no meal.
+			</prompt>    	
+		</field>
+		
+		<filled namelist="guess" mode="all">		
+			<prompt>
+				Looks like you <value expr="guess" />.
+			</prompt>
+			<goto next="#dtmfForm_V_MealConfirm" />.
+		 </filled>      
+    </form>
+	
+	<form id="dtmfForm_V_MealConfirm">
+		<property name="inputmodes" value="voice"/>
+		<field name="confirm" slot="confirm">
+			<grammar mode="voice" root="confmeal">
+              <rule id="confmeal" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes or no
+			</prompt>
+		</field>
+		<filled namelist="confirm" mode="all">
+			<if cond="confirm == 'no'">
+				<goto next="#dtmfForm_V_Meal" />
+			<elseif cond="confirm == 'yes'" />
+				<goto next="#dtmfForm_V_Tickets" />
+			</if>
+	   </filled>
+	</form>
+  
+  <form id="dtmfForm_V_Tickets">
+		<property name="inputmodes" value="voice"/>		
+		<field name="ticketsField" slot="ticketsField">		
+			<grammar mode="voice" root="ticket">
+              <rule id="ticket" scope="public"> 
+               <one-of>
+                 <item>one</item>
+                 <item>two</item>
+				 <item>three</item>
+				 <item>four</item>
+				 <item>five</item>
+				 <item>six</item>
+				 <item>seven</item>
+				 <item>eight</item>
+				 <item>nine</item>
+               </one-of>
+              </rule>
+          </grammar>
+			
+			<prompt bargein="false">
+				Please say the number of tickets from one to nine.
+			</prompt>    	
+		</field>		
+		<filled namelist="ticketsField" mode="all">		
+			<prompt>
+				Looks like you want <value expr="ticketsField" /> tickets.
+			</prompt>
+			<assign name="ticketsFieldVar" expr="ticketsField" />
+			<goto next="#dtmfForm_V_ticketConfirm" />.
+		 </filled>      
+    </form>	
+  
+  <form id="dtmfForm_V_ticketConfirm">
+		<property name="inputmodes" value="voice"/>
+		<field name="ticketsConfirmField" slot="ticketsConfirmField">
+			<grammar mode="voice" root="confticket">
+              <rule id="confticket" scope="public"> 
+               <one-of>
+                 <item>yes</item>
+                 <item>no</item>
+                 <item>cancel</item>
+               </one-of>
+              </rule>
+          </grammar>
+			<prompt bargein="false">
+			   Is this your right choice, say yes to confirm, no to change number of tickets, or cancel to cancel entire reservation
+			</prompt>
+		</field>
+		<filled namelist="ticketsConfirmField" mode="all">
+			<if cond="ticketsConfirmField == 'no'">
+				<goto next="#dtmfForm_V_Tickets" />
+			<elseif cond="ticketsConfirmField == 'yes'" />
+				<prompt>			
+					Your owe me <value expr="price(ticketsFieldVar, classFieldVar, fromFieldVar, destinationFieldVar, routeFieldVar)"/> egyptian pounds only, you can pay by	credit card or cash. Thank you for using our system.
+				</prompt>
+			<elseif cond="ticketsConfirmField == 'cancel'" />
+				<prompt>			
+					Your reservation has been cancelled upon your request. Thank you for using our system.
+				</prompt>
+			</if>
+	   </filled>
+	</form>
+  
+</vxml>
